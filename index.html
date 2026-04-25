@@ -1,0 +1,402 @@
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, ChevronRight, Menu, X, Instagram, Facebook, Phone, Heart, CheckCircle, ArrowRight } from 'lucide-react';
+
+const PRODUCTS = [
+  {
+    id: 1,
+    name: "Manta Chunky 'Nudo Andino'",
+    price: 340,
+    fiber: "Alpaca 100%",
+    texture: "Punto grueso con relieve",
+    colors: [
+      { name: "Terracota", hex: "#a45c40", img: "https://images.unsplash.com/photo-1516663235285-849734645396?auto=format&fit=crop&q=80&w=800" },
+      { name: "Crudo", hex: "#f5f5dc", img: "https://images.unsplash.com/photo-1463100099107-aa0980c362e6?auto=format&fit=crop&q=80&w=800" },
+      { name: "Verde Musgo", hex: "#4a5d23", img: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=800" }
+    ],
+    sizes: ["1.5m x 1.5m", "2m x 2m"],
+    trending: true
+  },
+  {
+    id: 2,
+    name: "Chalina 'Bruma de los Andes'",
+    price: 185,
+    fiber: "Mezcla Alpaca y Oveja",
+    texture: "Suavidad sedosa, acabado peinado",
+    colors: [
+      { name: "Gris Piedra", hex: "#8e918f", img: "https://images.unsplash.com/photo-1520903932197-1105da20d0fb?auto=format&fit=crop&q=80&w=800" },
+      { name: "Mostaza", hex: "#e3a018", img: "https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800" }
+    ],
+    sizes: ["Estándar"],
+    trending: false
+  },
+  {
+    id: 3,
+    name: "Cárdigan 'Herencia'",
+    price: 520,
+    fiber: "Lana de Oveja Hilada a Mano",
+    texture: "Tejido rústico de alta densidad",
+    colors: [
+      { name: "Chocolate", hex: "#3e2723", img: "https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80&w=800" },
+      { name: "Hueso", hex: "#ede6d6", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800" }
+    ],
+    sizes: ["S", "M", "L"],
+    trending: true
+  }
+];
+
+export default function App() {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [orderComplete, setOrderComplete] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("Todos");
+
+  const addToCart = (product, color, size) => {
+    setCart([...cart, { ...product, selectedColor: color, selectedSize: size, orderId: Math.random().toString(36).substr(2, 9) }]);
+    setSelectedProduct(null);
+  };
+
+  const removeFromCart = (orderId) => {
+    setCart(cart.filter(item => item.orderId !== orderId));
+  };
+
+  const totalPrice = cart.reduce((acc, curr) => acc + curr.price, 0);
+
+  const filteredProducts = activeFilter === "Todos" 
+    ? PRODUCTS 
+    : PRODUCTS.filter(p => p.fiber.includes(activeFilter));
+
+  return (
+    <div className="min-h-screen bg-[#faf9f6] text-[#2c2c2c] font-sans selection:bg-[#e3d5ca]">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-stone-100">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setIsMenuOpen(true)} className="p-2 lg:hidden">
+              <Menu size={24} />
+            </button>
+            <h1 className="text-2xl font-serif font-bold tracking-tighter">ARTESANÍA VIVA</h1>
+          </div>
+          
+          <div className="hidden lg:flex items-center gap-10 text-sm font-medium uppercase tracking-widest">
+            <a href="#inicio" className="hover:text-amber-800 transition-colors">Inicio</a>
+            <a href="#coleccion" className="hover:text-amber-800 transition-colors">Colección</a>
+            <a href="#proceso" className="hover:text-amber-800 transition-colors">Nuestro Proceso</a>
+            <a href="#pedidos" className="hover:text-amber-800 transition-colors">Pedidos</a>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <button className="relative p-2 hover:bg-stone-50 rounded-full transition-colors" onClick={() => setActiveFilter("Cart")}>
+              <ShoppingBag size={22} strokeWidth={1.5} />
+              {cart.length > 0 && (
+                <span className="absolute top-0 right-0 bg-amber-800 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section id="inicio" className="relative pt-20 h-[90vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1463100099107-aa0980c362e6?auto=format&fit=crop&q=80&w=2000" 
+            className="w-full h-full object-cover"
+            alt="Fibras de lana"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-white">
+          <div className="max-w-2xl">
+            <span className="inline-block py-1 px-3 bg-white/20 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.2em] mb-6">
+              Edición Limitada Invierno 2026
+            </span>
+            <h2 className="text-6xl md:text-8xl font-serif leading-tight mb-8">
+              Siente la Calidez <br /> de los Andes
+            </h2>
+            <p className="text-lg md:text-xl text-stone-200 mb-10 max-w-lg leading-relaxed font-light">
+              Fibras nobles de Alpaca y Oveja, tejidas a mano por comunidades maestras con tintes naturales de tendencia.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a href="#coleccion" className="px-8 py-4 bg-white text-black font-bold uppercase text-xs tracking-widest hover:bg-stone-100 transition-all">
+                Ver Colección
+              </a>
+              <button className="px-8 py-4 border border-white/30 backdrop-blur-sm text-white font-bold uppercase text-xs tracking-widest hover:bg-white/10 transition-all">
+                Descubrir Proceso
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Collections Section */}
+      <section id="coleccion" className="py-24 max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <h3 className="text-4xl font-serif mb-4">Piezas de Colección</h3>
+            <p className="text-stone-500 max-w-md">Cada tejido es una obra única. Selecciona tu pieza favorita y personaliza los detalles de tu pedido.</p>
+          </div>
+          <div className="flex gap-4 border-b border-stone-200">
+            {["Todos", "Alpaca", "Oveja"].map(filter => (
+              <button 
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`pb-4 px-2 text-sm uppercase tracking-widest transition-all ${activeFilter === filter ? 'border-b-2 border-amber-800 text-amber-800 font-bold' : 'text-stone-400'}`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
+              <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 rounded-sm">
+                <img 
+                  src={product.colors[0].img} 
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+                {product.trending && (
+                  <div className="absolute top-4 left-4 bg-amber-800 text-white text-[10px] uppercase font-bold px-3 py-1 tracking-widest">
+                    Tendencia
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="bg-white px-6 py-3 text-xs uppercase font-bold tracking-widest">Ver Detalles</span>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">{product.fiber}</p>
+                  <h4 className="text-xl font-serif group-hover:text-amber-800 transition-colors">{product.name}</h4>
+                  <p className="text-sm text-stone-500 italic mt-1">{product.texture}</p>
+                </div>
+                <p className="font-semibold text-stone-800">S/ {product.price}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Feature Section: Texture Focus */}
+      <section className="bg-stone-900 text-white py-24">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-4">
+              <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600" className="w-full aspect-square object-cover rounded-sm grayscale hover:grayscale-0 transition-all duration-700" alt="Texture 1" />
+              <img src="https://images.unsplash.com/photo-1516663235285-849734645396?auto=format&fit=crop&q=80&w=600" className="w-full aspect-square object-cover mt-8 rounded-sm grayscale hover:grayscale-0 transition-all duration-700" alt="Texture 2" />
+            </div>
+          </div>
+          <div>
+            <h3 className="text-4xl font-serif mb-8 leading-snug">Texturas que cuentan <br/> historias de siglos.</h3>
+            <p className="text-stone-400 mb-8 leading-relaxed">
+              No es solo lana. Es la suavidad de la Baby Alpaca recolectada en los picos más altos y el carácter rústico de la oveja criolla. Nuestros tintes se obtienen de plantas, insectos y minerales, asegurando una huella ecológica nula.
+            </p>
+            <div className="space-y-6">
+              {[
+                { title: "Tinte Natural", desc: "Uso exclusivo de cochinilla, chilca y nogal." },
+                { title: "Hilado a Mano", desc: "Técnica tradicional con pushka para mayor resistencia." },
+                { title: "Comercio Justo", desc: "Trato directo con las familias tejedoras." }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="w-6 h-6 border border-amber-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-sm uppercase tracking-widest">{item.title}</h5>
+                    <p className="text-stone-500 text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cart Side View (Simulated) */}
+      {activeFilter === "Cart" && (
+        <div className="fixed inset-0 z-[100] flex justify-end">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setActiveFilter("Todos")}></div>
+          <div className="relative w-full max-w-md bg-white h-full shadow-2xl p-8 flex flex-col">
+            <div className="flex justify-between items-center mb-10">
+              <h3 className="text-2xl font-serif">Tu Pedido</h3>
+              <button onClick={() => setActiveFilter("Todos")} className="p-2"><X size={24} /></button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-6">
+              {cart.length === 0 ? (
+                <div className="text-center py-20 text-stone-400">
+                  <ShoppingBag size={48} className="mx-auto mb-4 opacity-20" />
+                  <p>Aún no has seleccionado piezas.</p>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <div key={item.orderId} className="flex gap-4 border-b border-stone-100 pb-6">
+                    <img src={item.selectedColor.img} className="w-20 h-24 object-cover rounded" alt={item.name} />
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <h5 className="font-bold text-sm">{item.name}</h5>
+                        <button onClick={() => removeFromCart(item.orderId)}><X size={14} className="text-stone-400" /></button>
+                      </div>
+                      <p className="text-xs text-stone-500 mt-1">{item.selectedColor.name} | {item.selectedSize}</p>
+                      <p className="mt-2 font-semibold">S/ {item.price}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {cart.length > 0 && (
+              <div className="pt-8 border-t border-stone-200">
+                <div className="flex justify-between mb-6 text-lg font-serif">
+                  <span>Total estimado:</span>
+                  <span>S/ {totalPrice}</span>
+                </div>
+                <button 
+                  className="w-full bg-stone-900 text-white py-4 font-bold uppercase text-xs tracking-widest hover:bg-amber-800 transition-colors"
+                  onClick={() => {
+                    setOrderComplete(true);
+                    setCart([]);
+                  }}
+                >
+                  Finalizar Pedido
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Product Quick View / Detail Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
+          <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onClick={() => setSelectedProduct(null)}></div>
+          <div className="relative bg-white w-full max-w-5xl rounded-sm shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+            <button className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full" onClick={() => setSelectedProduct(null)}>
+              <X size={20} />
+            </button>
+            
+            <div className="w-full md:w-1/2 bg-stone-100 overflow-hidden">
+              <img 
+                src={selectedProduct.colors[0].img} 
+                alt={selectedProduct.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div className="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto">
+              <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{selectedProduct.fiber}</span>
+              <h3 className="text-3xl font-serif mt-2 mb-4">{selectedProduct.name}</h3>
+              <p className="text-2xl font-light text-amber-900 mb-8">S/ {selectedProduct.price}</p>
+              
+              <div className="mb-8">
+                <p className="text-[10px] uppercase font-bold mb-4 tracking-widest">Colores de Tendencia</p>
+                <div className="flex gap-4">
+                  {selectedProduct.colors.map(color => (
+                    <div key={color.name} className="group text-center">
+                      <div 
+                        className="w-10 h-10 rounded-full border-2 border-transparent hover:border-stone-800 transition-all cursor-pointer mb-2"
+                        style={{ backgroundColor: color.hex }}
+                        title={color.name}
+                      ></div>
+                      <span className="text-[9px] uppercase text-stone-400">{color.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <p className="text-[10px] uppercase font-bold mb-4 tracking-widest">Medida / Talla</p>
+                <div className="flex gap-3">
+                  {selectedProduct.sizes.map(size => (
+                    <button key={size} className="px-4 py-2 border border-stone-200 text-xs font-semibold hover:border-black transition-colors">
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-10 text-sm text-stone-600 leading-relaxed">
+                <p><strong>Textura:</strong> {selectedProduct.texture}</p>
+                <p>Nuestros maestros tejedores dedican aproximadamente 15 días para completar esta pieza de {selectedProduct.fiber.toLowerCase()}.</p>
+              </div>
+
+              <button 
+                onClick={() => addToCart(selectedProduct, selectedProduct.colors[0], selectedProduct.sizes[0])}
+                className="w-full bg-stone-900 text-white py-5 font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-amber-800 transition-colors"
+              >
+                Añadir al Pedido <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Success Modal */}
+      {orderComplete && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => setOrderComplete(false)}></div>
+          <div className="relative bg-white p-12 text-center max-w-lg rounded-sm shadow-2xl">
+            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={40} className="text-green-600" strokeWidth={1.5} />
+            </div>
+            <h3 className="text-3xl font-serif mb-4">¡Pedido Iniciado!</h3>
+            <p className="text-stone-500 mb-8 leading-relaxed">
+              Gracias por valorar el arte artesanal. Hemos recibido tu solicitud. Un asesor se comunicará contigo vía WhatsApp para confirmar los detalles del envío y la personalización.
+            </p>
+            <button 
+              onClick={() => {
+                setOrderComplete(false);
+                setActiveFilter("Todos");
+              }}
+              className="px-10 py-4 bg-stone-900 text-white font-bold uppercase text-[10px] tracking-widest hover:bg-amber-800 transition-all"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="bg-stone-50 pt-20 pb-10 border-t border-stone-200">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-20">
+          <div className="col-span-2">
+            <h4 className="text-2xl font-serif font-bold mb-6">ARTESANÍA VIVA</h4>
+            <p className="text-stone-500 max-w-sm mb-8 leading-relaxed">
+              Dedicados a la preservación del patrimonio textil andino. Cada hilo es un compromiso con la tierra y el futuro de nuestras comunidades.
+            </p>
+            <div className="flex gap-6">
+              <Instagram size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
+              <Facebook size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
+              <Phone size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
+            </div>
+          </div>
+          <div>
+            <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">Información</h5>
+            <ul className="space-y-4 text-sm text-stone-500">
+              <li><a href="#" className="hover:text-black transition-colors">Cuidado de la Lana</a></li>
+              <li><a href="#" className="hover:text-black transition-colors">Trazabilidad</a></li>
+              <li><a href="#" className="hover:text-black transition-colors">Envíos Internacionales</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">Atención</h5>
+            <ul className="space-y-4 text-sm text-stone-500">
+              <li><a href="#" className="hover:text-black transition-colors">Preguntas Frecuentes</a></li>
+              <li><a href="#" className="hover:text-black transition-colors">Términos de Compra</a></li>
+              <li><a href="#" className="hover:text-black transition-colors">Contacto Directo</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 text-center text-[10px] uppercase tracking-[0.3em] text-stone-400">
+          &copy; 2026 Artesanía Viva. Diseñado con alma en Perú.
+        </div>
+      </footer>
+    </div>
+  );
+}
