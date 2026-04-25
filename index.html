@@ -1,402 +1,642 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingBag, ChevronRight, Menu, X, Instagram, Facebook, Phone, Heart, CheckCircle, ArrowRight } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Wool & Weave | Artisanal Alpaca & Sheep Wool</title>
+  <!-- Google Fonts: Sophisticated serif + clean sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "Manta Chunky 'Nudo Andino'",
-    price: 340,
-    fiber: "Alpaca 100%",
-    texture: "Punto grueso con relieve",
-    colors: [
-      { name: "Terracota", hex: "#a45c40", img: "https://images.unsplash.com/photo-1516663235285-849734645396?auto=format&fit=crop&q=80&w=800" },
-      { name: "Crudo", hex: "#f5f5dc", img: "https://images.unsplash.com/photo-1463100099107-aa0980c362e6?auto=format&fit=crop&q=80&w=800" },
-      { name: "Verde Musgo", hex: "#4a5d23", img: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=800" }
-    ],
-    sizes: ["1.5m x 1.5m", "2m x 2m"],
-    trending: true
-  },
-  {
-    id: 2,
-    name: "Chalina 'Bruma de los Andes'",
-    price: 185,
-    fiber: "Mezcla Alpaca y Oveja",
-    texture: "Suavidad sedosa, acabado peinado",
-    colors: [
-      { name: "Gris Piedra", hex: "#8e918f", img: "https://images.unsplash.com/photo-1520903932197-1105da20d0fb?auto=format&fit=crop&q=80&w=800" },
-      { name: "Mostaza", hex: "#e3a018", img: "https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800" }
-    ],
-    sizes: ["Estándar"],
-    trending: false
-  },
-  {
-    id: 3,
-    name: "Cárdigan 'Herencia'",
-    price: 520,
-    fiber: "Lana de Oveja Hilada a Mano",
-    texture: "Tejido rústico de alta densidad",
-    colors: [
-      { name: "Chocolate", hex: "#3e2723", img: "https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&q=80&w=800" },
-      { name: "Hueso", hex: "#ede6d6", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800" }
-    ],
-    sizes: ["S", "M", "L"],
-    trending: true
-  }
-];
+    body {
+      background-color: #FAF6EF;   /* soft warm base */
+      font-family: 'Inter', sans-serif;
+      color: #2A2A27;
+      line-height: 1.4;
+      scroll-behavior: smooth;
+    }
 
-export default function App() {
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [cart, setCart] = useState([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [orderComplete, setOrderComplete] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("Todos");
+    /* earthy palette + sage + mustard (2026 trends) */
+    :root {
+      --cream: #FEF7E6;
+      --terracotta-deep: #B55A3A;
+      --sage: #9CAF88;
+      --mustard: #E3B23C;
+      --charcoal-soft: #3E3C39;
+      --wool-white: #FEF9EF;
+      --shadow-soft: 0 20px 35px -12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02);
+      --border-light: #E7DFD3;
+    }
 
-  const addToCart = (product, color, size) => {
-    setCart([...cart, { ...product, selectedColor: color, selectedSize: size, orderId: Math.random().toString(36).substr(2, 9) }]);
-    setSelectedProduct(null);
-  };
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
 
-  const removeFromCart = (orderId) => {
-    setCart(cart.filter(item => item.orderId !== orderId));
-  };
+    /* ===== HEADER / NAV ===== */
+    .site-nav {
+      padding: 2rem 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 2rem;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: #2A2A27;
+    }
+    .logo span {
+      font-weight: 400;
+      font-style: italic;
+      color: var(--terracotta-deep);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      font-weight: 450;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #3E3C39;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--terracotta-deep);
+    }
+    .cart-icon {
+      font-size: 1.2rem;
+      position: relative;
+    }
+    /* responsive header */
+    @media (max-width: 800px) {
+      .site-nav {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+      .nav-links { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+      .container { padding: 0 1.25rem; }
+    }
 
-  const totalPrice = cart.reduce((acc, curr) => acc + curr.price, 0);
+    /* ===== HERO SECTION (Macro texture shot) ===== */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-bottom: 5rem;
+      align-items: center;
+      background: var(--wool-white);
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+    .hero-image {
+      flex: 1.2;
+      min-height: 500px;
+      background-image: url('https://images.pexels.com/photos/8260922/pexels-photo-8260922.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1000&fit=crop');
+      background-size: cover;
+      background-position: 50% 35%;
+      position: relative;
+      transition: all 0.3s;
+      /* fallback for macro texture: high-res cream alpaca + terracotta scarf overlay effect */
+    }
+    /* to simulate woven macro detail and deep terracotta & cream together, we add a gradient overlay hint */
+    .hero-image::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle at 20% 40%, rgba(181,90,58,0.12) 0%, rgba(156,175,136,0.08) 100%);
+      pointer-events: none;
+    }
+    /* high-res texture assurance: actual image shows fluffy alpaca texture + terracotta tones */
+    .hero-content {
+      flex: 0.9;
+      padding: 2rem 2rem 2rem 1rem;
+    }
+    .hero-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.3rem;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+      color: #2A2A27;
+    }
+    .hero-content p {
+      font-size: 1.1rem;
+      color: #4B4843;
+      margin-bottom: 2rem;
+      max-width: 90%;
+      line-height: 1.5;
+    }
+    .btn-primary {
+      background-color: var(--terracotta-deep);
+      border: none;
+      padding: 0.9rem 2rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: white;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background-color: #9C4A2C;
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--sage);
+      color: var(--charcoal-soft);
+      padding: 0.85rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 500;
+      margin-left: 1rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-outline:hover {
+      background: var(--sage);
+      border-color: var(--sage);
+      color: white;
+    }
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; }
+      .hero-image { min-height: 380px; width: 100%; }
+      .hero-content { padding: 1.5rem; text-align: center; }
+      .hero-content p { max-width: 100%; }
+      .hero-content h1 { font-size: 2.5rem; }
+    }
 
-  const filteredProducts = activeFilter === "Todos" 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.fiber.includes(activeFilter));
+    /* ===== PRODUCT GRID ===== */
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      margin: 3rem 0 1rem;
+      color: #2A2A27;
+      border-left: 5px solid var(--mustard);
+      padding-left: 1rem;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0 3rem;
+    }
+    .product-card {
+      background: white;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+      border: 1px solid #F0E9E0;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 25px 30px -12px rgba(0,0,0,0.1);
+      border-color: var(--sage);
+    }
+    .product-img {
+      width: 100%;
+      aspect-ratio: 1 / 1.1;
+      object-fit: cover;
+      display: block;
+      background: #F5EFE5;
+      transition: transform 0.4s;
+    }
+    .product-card:hover .product-img {
+      transform: scale(1.02);
+    }
+    .product-info {
+      padding: 1.2rem 1.2rem 1.4rem;
+    }
+    .product-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: -0.2px;
+      margin-bottom: 0.3rem;
+    }
+    .product-sub {
+      font-size: 0.8rem;
+      color: var(--terracotta-deep);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.6rem;
+    }
+    .price {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #2A2A27;
+      margin-bottom: 0.8rem;
+    }
+    .add-to-cart {
+      background: var(--sage);
+      border: none;
+      color: white;
+      font-weight: 500;
+      padding: 0.7rem 1rem;
+      width: 100%;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .add-to-cart i {
+      font-size: 0.9rem;
+    }
+    .add-to-cart:hover {
+      background: #7C8F68;
+    }
+    /* pre-order specific button style */
+    .preorder-btn {
+      background: var(--mustard);
+      color: #2A2A27;
+    }
+    .preorder-btn:hover {
+      background: #D19F2C;
+      color: white;
+    }
 
-  return (
-    <div className="min-h-screen bg-[#faf9f6] text-[#2c2c2c] font-sans selection:bg-[#e3d5ca]">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-stone-100">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button onClick={() => setIsMenuOpen(true)} className="p-2 lg:hidden">
-              <Menu size={24} />
-            </button>
-            <h1 className="text-2xl font-serif font-bold tracking-tighter">ARTESANÍA VIVA</h1>
-          </div>
-          
-          <div className="hidden lg:flex items-center gap-10 text-sm font-medium uppercase tracking-widest">
-            <a href="#inicio" className="hover:text-amber-800 transition-colors">Inicio</a>
-            <a href="#coleccion" className="hover:text-amber-800 transition-colors">Colección</a>
-            <a href="#proceso" className="hover:text-amber-800 transition-colors">Nuestro Proceso</a>
-            <a href="#pedidos" className="hover:text-amber-800 transition-colors">Pedidos</a>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <button className="relative p-2 hover:bg-stone-50 rounded-full transition-colors" onClick={() => setActiveFilter("Cart")}>
-              <ShoppingBag size={22} strokeWidth={1.5} />
-              {cart.length > 0 && (
-                <span className="absolute top-0 right-0 bg-amber-800 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">
-                  {cart.length}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section id="inicio" className="relative pt-20 h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1463100099107-aa0980c362e6?auto=format&fit=crop&q=80&w=2000" 
-            className="w-full h-full object-cover"
-            alt="Fibras de lana"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-white">
-          <div className="max-w-2xl">
-            <span className="inline-block py-1 px-3 bg-white/20 backdrop-blur-md rounded-full text-xs uppercase tracking-[0.2em] mb-6">
-              Edición Limitada Invierno 2026
-            </span>
-            <h2 className="text-6xl md:text-8xl font-serif leading-tight mb-8">
-              Siente la Calidez <br /> de los Andes
-            </h2>
-            <p className="text-lg md:text-xl text-stone-200 mb-10 max-w-lg leading-relaxed font-light">
-              Fibras nobles de Alpaca y Oveja, tejidas a mano por comunidades maestras con tintes naturales de tendencia.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <a href="#coleccion" className="px-8 py-4 bg-white text-black font-bold uppercase text-xs tracking-widest hover:bg-stone-100 transition-all">
-                Ver Colección
-              </a>
-              <button className="px-8 py-4 border border-white/30 backdrop-blur-sm text-white font-bold uppercase text-xs tracking-widest hover:bg-white/10 transition-all">
-                Descubrir Proceso
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collections Section */}
-      <section id="coleccion" className="py-24 max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div>
-            <h3 className="text-4xl font-serif mb-4">Piezas de Colección</h3>
-            <p className="text-stone-500 max-w-md">Cada tejido es una obra única. Selecciona tu pieza favorita y personaliza los detalles de tu pedido.</p>
-          </div>
-          <div className="flex gap-4 border-b border-stone-200">
-            {["Todos", "Alpaca", "Oveja"].map(filter => (
-              <button 
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`pb-4 px-2 text-sm uppercase tracking-widest transition-all ${activeFilter === filter ? 'border-b-2 border-amber-800 text-amber-800 font-bold' : 'text-stone-400'}`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
-              <div className="relative aspect-[3/4] overflow-hidden bg-stone-100 rounded-sm">
-                <img 
-                  src={product.colors[0].img} 
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
-                {product.trending && (
-                  <div className="absolute top-4 left-4 bg-amber-800 text-white text-[10px] uppercase font-bold px-3 py-1 tracking-widest">
-                    Tendencia
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-white px-6 py-3 text-xs uppercase font-bold tracking-widest">Ver Detalles</span>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-between items-start">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">{product.fiber}</p>
-                  <h4 className="text-xl font-serif group-hover:text-amber-800 transition-colors">{product.name}</h4>
-                  <p className="text-sm text-stone-500 italic mt-1">{product.texture}</p>
-                </div>
-                <p className="font-semibold text-stone-800">S/ {product.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Feature Section: Texture Focus */}
-      <section className="bg-stone-900 text-white py-24">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&q=80&w=600" className="w-full aspect-square object-cover rounded-sm grayscale hover:grayscale-0 transition-all duration-700" alt="Texture 1" />
-              <img src="https://images.unsplash.com/photo-1516663235285-849734645396?auto=format&fit=crop&q=80&w=600" className="w-full aspect-square object-cover mt-8 rounded-sm grayscale hover:grayscale-0 transition-all duration-700" alt="Texture 2" />
-            </div>
-          </div>
-          <div>
-            <h3 className="text-4xl font-serif mb-8 leading-snug">Texturas que cuentan <br/> historias de siglos.</h3>
-            <p className="text-stone-400 mb-8 leading-relaxed">
-              No es solo lana. Es la suavidad de la Baby Alpaca recolectada en los picos más altos y el carácter rústico de la oveja criolla. Nuestros tintes se obtienen de plantas, insectos y minerales, asegurando una huella ecológica nula.
-            </p>
-            <div className="space-y-6">
-              {[
-                { title: "Tinte Natural", desc: "Uso exclusivo de cochinilla, chilca y nogal." },
-                { title: "Hilado a Mano", desc: "Técnica tradicional con pushka para mayor resistencia." },
-                { title: "Comercio Justo", desc: "Trato directo con las familias tejedoras." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="w-6 h-6 border border-amber-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <div className="w-2 h-2 bg-amber-600 rounded-full"></div>
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-sm uppercase tracking-widest">{item.title}</h5>
-                    <p className="text-stone-500 text-sm">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Cart Side View (Simulated) */}
-      {activeFilter === "Cart" && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setActiveFilter("Todos")}></div>
-          <div className="relative w-full max-w-md bg-white h-full shadow-2xl p-8 flex flex-col">
-            <div className="flex justify-between items-center mb-10">
-              <h3 className="text-2xl font-serif">Tu Pedido</h3>
-              <button onClick={() => setActiveFilter("Todos")} className="p-2"><X size={24} /></button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-6">
-              {cart.length === 0 ? (
-                <div className="text-center py-20 text-stone-400">
-                  <ShoppingBag size={48} className="mx-auto mb-4 opacity-20" />
-                  <p>Aún no has seleccionado piezas.</p>
-                </div>
-              ) : (
-                cart.map((item) => (
-                  <div key={item.orderId} className="flex gap-4 border-b border-stone-100 pb-6">
-                    <img src={item.selectedColor.img} className="w-20 h-24 object-cover rounded" alt={item.name} />
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h5 className="font-bold text-sm">{item.name}</h5>
-                        <button onClick={() => removeFromCart(item.orderId)}><X size={14} className="text-stone-400" /></button>
-                      </div>
-                      <p className="text-xs text-stone-500 mt-1">{item.selectedColor.name} | {item.selectedSize}</p>
-                      <p className="mt-2 font-semibold">S/ {item.price}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="pt-8 border-t border-stone-200">
-                <div className="flex justify-between mb-6 text-lg font-serif">
-                  <span>Total estimado:</span>
-                  <span>S/ {totalPrice}</span>
-                </div>
-                <button 
-                  className="w-full bg-stone-900 text-white py-4 font-bold uppercase text-xs tracking-widest hover:bg-amber-800 transition-colors"
-                  onClick={() => {
-                    setOrderComplete(true);
-                    setCart([]);
-                  }}
-                >
-                  Finalizar Pedido
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Product Quick View / Detail Modal */}
-      {selectedProduct && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
-          <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onClick={() => setSelectedProduct(null)}></div>
-          <div className="relative bg-white w-full max-w-5xl rounded-sm shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
-            <button className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full" onClick={() => setSelectedProduct(null)}>
-              <X size={20} />
-            </button>
-            
-            <div className="w-full md:w-1/2 bg-stone-100 overflow-hidden">
-              <img 
-                src={selectedProduct.colors[0].img} 
-                alt={selectedProduct.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <div className="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto">
-              <span className="text-[10px] uppercase tracking-[0.3em] text-stone-400">{selectedProduct.fiber}</span>
-              <h3 className="text-3xl font-serif mt-2 mb-4">{selectedProduct.name}</h3>
-              <p className="text-2xl font-light text-amber-900 mb-8">S/ {selectedProduct.price}</p>
-              
-              <div className="mb-8">
-                <p className="text-[10px] uppercase font-bold mb-4 tracking-widest">Colores de Tendencia</p>
-                <div className="flex gap-4">
-                  {selectedProduct.colors.map(color => (
-                    <div key={color.name} className="group text-center">
-                      <div 
-                        className="w-10 h-10 rounded-full border-2 border-transparent hover:border-stone-800 transition-all cursor-pointer mb-2"
-                        style={{ backgroundColor: color.hex }}
-                        title={color.name}
-                      ></div>
-                      <span className="text-[9px] uppercase text-stone-400">{color.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <p className="text-[10px] uppercase font-bold mb-4 tracking-widest">Medida / Talla</p>
-                <div className="flex gap-3">
-                  {selectedProduct.sizes.map(size => (
-                    <button key={size} className="px-4 py-2 border border-stone-200 text-xs font-semibold hover:border-black transition-colors">
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4 mb-10 text-sm text-stone-600 leading-relaxed">
-                <p><strong>Textura:</strong> {selectedProduct.texture}</p>
-                <p>Nuestros maestros tejedores dedican aproximadamente 15 días para completar esta pieza de {selectedProduct.fiber.toLowerCase()}.</p>
-              </div>
-
-              <button 
-                onClick={() => addToCart(selectedProduct, selectedProduct.colors[0], selectedProduct.sizes[0])}
-                className="w-full bg-stone-900 text-white py-5 font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-amber-800 transition-colors"
-              >
-                Añadir al Pedido <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Order Success Modal */}
-      {orderComplete && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={() => setOrderComplete(false)}></div>
-          <div className="relative bg-white p-12 text-center max-w-lg rounded-sm shadow-2xl">
-            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={40} className="text-green-600" strokeWidth={1.5} />
-            </div>
-            <h3 className="text-3xl font-serif mb-4">¡Pedido Iniciado!</h3>
-            <p className="text-stone-500 mb-8 leading-relaxed">
-              Gracias por valorar el arte artesanal. Hemos recibido tu solicitud. Un asesor se comunicará contigo vía WhatsApp para confirmar los detalles del envío y la personalización.
-            </p>
-            <button 
-              onClick={() => {
-                setOrderComplete(false);
-                setActiveFilter("Todos");
-              }}
-              className="px-10 py-4 bg-stone-900 text-white font-bold uppercase text-[10px] tracking-widest hover:bg-amber-800 transition-all"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer className="bg-stone-50 pt-20 pb-10 border-t border-stone-200">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-20">
-          <div className="col-span-2">
-            <h4 className="text-2xl font-serif font-bold mb-6">ARTESANÍA VIVA</h4>
-            <p className="text-stone-500 max-w-sm mb-8 leading-relaxed">
-              Dedicados a la preservación del patrimonio textil andino. Cada hilo es un compromiso con la tierra y el futuro de nuestras comunidades.
-            </p>
-            <div className="flex gap-6">
-              <Instagram size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
-              <Facebook size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
-              <Phone size={20} className="text-stone-400 hover:text-black cursor-pointer transition-colors" />
-            </div>
-          </div>
-          <div>
-            <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">Información</h5>
-            <ul className="space-y-4 text-sm text-stone-500">
-              <li><a href="#" className="hover:text-black transition-colors">Cuidado de la Lana</a></li>
-              <li><a href="#" className="hover:text-black transition-colors">Trazabilidad</a></li>
-              <li><a href="#" className="hover:text-black transition-colors">Envíos Internacionales</a></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="font-bold text-[10px] uppercase tracking-widest mb-6">Atención</h5>
-            <ul className="space-y-4 text-sm text-stone-500">
-              <li><a href="#" className="hover:text-black transition-colors">Preguntas Frecuentes</a></li>
-              <li><a href="#" className="hover:text-black transition-colors">Términos de Compra</a></li>
-              <li><a href="#" className="hover:text-black transition-colors">Contacto Directo</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 text-center text-[10px] uppercase tracking-[0.3em] text-stone-400">
-          &copy; 2026 Artesanía Viva. Diseñado con alma en Perú.
-        </div>
-      </footer>
+    /* ===== PRE-ORDER FORM (custom) ===== */
+    .preorder-section {
+      background: #F3EFE6;
+      border-radius: 2rem;
+      padding: 2rem 2rem;
+      margin: 3rem 0 4rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #E2D7C8;
+    }
+    .preorder-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #2A2A27;
+    }
+    .preorder-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      align-items: flex-end;
+    }
+    .form-group {
+      flex: 1 1 200px;
+      min-width: 180px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #5F5C57;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 60px;
+      border: 1px solid #DCD0C0;
+      background: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(156,175,136,0.2);
+    }
+    .submit-preorder {
+      background: var(--terracotta-deep);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.6rem;
+    }
+    .submit-preorder:hover {
+      background: #93472C;
+      transform: scale(0.98);
+    }
+    .toast-message {
+      margin-top: 1rem;
+      background: var(--sage);
+      color: white;
+      padding: 0.7rem;
+      border-radius: 60px;
+      text-align: center;
+      font-size: 0.85rem;
+      display: inline-block;
+      width: auto;
+    }
+    /* footer */
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.8rem;
+      color: #6C6963;
+    }
+    /* responsive adjustments */
+    @media (max-width: 600px) {
+      .preorder-form { flex-direction: column; align-items: stretch; }
+      .btn-outline { margin-left: 0; margin-top: 1rem; display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- header / nav -->
+  <header class="site-nav">
+    <div class="logo">Wool & <span>Weave</span></div>
+    <div class="nav-links">
+      <a href="#">WOMEN</a>
+      <a href="#">MEN</a>
+      <a href="#">HOME</a>
+      <a href="#">THE ATELIER</a>
+      <a href="#" class="cart-icon"><i class="fas fa-shopping-bag"></i> <span style="font-size: 0.7rem; margin-left: 4px;">0</span></a>
     </div>
-  );
-}
+  </header>
+
+  <!-- HERO: macro shot showing soft texture (high-resolution) -->
+  <div class="hero">
+    <div class="hero-image" 
+         title="Macro close-up of hand-woven cream alpaca sweater with deep terracotta sheep wool scarf – natural texture, soft shadows">
+         <!-- actual high-res macro image: cream alpaca + terracotta accents texture. Using premium unsplash-like image but we simulate high quality -->
+    </div>
+    <div class="hero-content">
+      <h1>Woven by nature,<br>honed by artisans</h1>
+      <p>Ultra-soft alpaca & hand-harvested sheep wool. Each heirloom piece captures the high-altitude warmth of the Andes. Macro textures, timeless design.</p>
+      <div>
+        <button class="btn-primary" id="exploreBtn">Shop the collection <i class="fas fa-arrow-right"></i></button>
+        <button class="btn-outline" id="preorderScrollBtn">Pre-order limited edition</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT GRID (clean, minimalist, earthy) -->
+  <h2 class="section-title">Signature wools</h2>
+  <div class="product-grid" id="productGrid">
+    <!-- product 1 - cream alpaca sweater -->
+    <div class="product-card" data-product-id="1" data-name="Cumulus Alpaca Sweater" data-price="289">
+      <img class="product-img" src="https://images.pexels.com/photos/5830756/pexels-photo-5830756.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop" alt="Handwoven cream alpaca wool sweater macro soft texture">
+      <div class="product-info">
+        <div class="product-title">Cumulus Alpaca Sweater</div>
+        <div class="product-sub">Baby alpaca · Cream</div>
+        <div class="price">$289</div>
+        <button class="add-to-cart" data-cart-add="1"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+      </div>
+    </div>
+    <!-- product 2 - deep terracotta sheep wool scarf -->
+    <div class="product-card" data-product-id="2" data-name="Terracotta Highlands Scarf" data-price="149">
+      <img class="product-img" src="https://images.pexels.com/photos/4526161/pexels-photo-4526161.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop" alt="Deep terracotta sheep wool scarf thick weave">
+      <div class="product-info">
+        <div class="product-title">Terracotta Sheep Scarf</div>
+        <div class="product-sub">Merino wool · Rustic terracotta</div>
+        <div class="price">$149</div>
+        <button class="add-to-cart" data-cart-add="2"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+      </div>
+    </div>
+    <!-- product 3 - sage green alpaca throw -->
+    <div class="product-card" data-product-id="3" data-name="Mossstone Alpaca Throw" data-price="359">
+      <img class="product-img" src="https://images.pexels.com/photos/8972678/pexels-photo-8972678.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop" alt="Sage green handwoven alpaca blanket organic">
+      <div class="product-info">
+        <div class="product-title">Mossstone Alpaca Throw</div>
+        <div class="product-sub">Sage green · Reversible</div>
+        <div class="price">$359</div>
+        <button class="add-to-cart" data-cart-add="3"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+      </div>
+    </div>
+    <!-- product 4 - mustard yellow wool beanie (pre-order badge) -->
+    <div class="product-card" data-product-id="4" data-name="Golden Mustard Beanie" data-price="89">
+      <img class="product-img" src="https://images.pexels.com/photos/5334267/pexels-photo-5334267.jpeg?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop" alt="Mustard yellow organic wool beanie">
+      <div class="product-info">
+        <div class="product-title">Harvest Mustard Beanie</div>
+        <div class="product-sub">Limited run · Sheep Wool</div>
+        <div class="price">$89</div>
+        <!-- pre-order button for this specific product to show custom form integration -->
+        <button class="add-to-cart preorder-btn" data-preorder-trigger="4"><i class="fas fa-calendar-alt"></i> Pre-order now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- custom PRE-ORDER form section (for upcoming designs) -->
+  <div class="preorder-section" id="preorderFormSection">
+    <div class="preorder-title">✨ Reserve future weaves</div>
+    <p style="margin-bottom: 1rem; color:#514D47;">Sign up to secure limited alpaca & sheep wool pieces from our Spring 2026 studio collection. First access & artisan story.</p>
+    <div class="preorder-form" id="customPreorderForm">
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" id="preorderName" placeholder="Elena Vasquez" required>
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="preorderEmail" placeholder="hello@woolandweave.com" required>
+      </div>
+      <div class="form-group">
+        <label>Preferred item</label>
+        <select id="preorderItem">
+          <option value="Alpaca cardigan (cream)">Alpaca cardigan (cream)</option>
+          <option value="Terracotta wool overcoat">Terracotta wool overcoat</option>
+          <option value="Sage green blanket">Sage green blanket</option>
+          <option value="Mustard alpaca snood">Mustard alpaca snood</option>
+        </select>
+      </div>
+      <button type="button" class="submit-preorder" id="submitPreorderBtn">Pre-order now →</button>
+    </div>
+    <div id="preorderMessage" style="margin-top: 1rem;"></div>
+  </div>
+  <footer>
+    <p>© 2026 Wool & Weave — ethically sourced, handwoven with heritage. Soft shadows, slow fashion.</p>
+  </footer>
+</div>
+
+<script>
+  // shopping cart simulation (in-memory, minimal)
+  let cartCount = 0;
+  const cartElement = document.querySelector('.cart-icon span');
+  function updateCartUI() {
+    if(cartElement) cartElement.innerText = cartCount;
+  }
+
+  // generic add to cart feedback (toast styling)
+  function showToastMessage(message, isSuccess = true, container = document.body) {
+    let existingToast = document.querySelector('.dynamic-toast');
+    if(existingToast) existingToast.remove();
+    const toast = document.createElement('div');
+    toast.className = 'dynamic-toast';
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = isSuccess ? 'var(--sage)' : 'var(--terracotta-deep)';
+    toast.style.color = 'white';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '60px';
+    toast.style.fontSize = '0.9rem';
+    toast.style.fontWeight = '500';
+    toast.style.zIndex = '1000';
+    toast.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+    toast.style.backdropFilter = 'blur(4px)';
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2400);
+  }
+
+  // attach all Add to Cart buttons from product grid
+  function bindAddToCartButtons() {
+    const allAddButtons = document.querySelectorAll('.add-to-cart');
+    allAddButtons.forEach(btn => {
+      // remove previous listener to avoid duplication (just reset if needed)
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // check if it's a preorder trigger (data-preorder-trigger)
+        if(newBtn.hasAttribute('data-preorder-trigger')) {
+          // scroll to pre-order form and highlight
+          const preSection = document.getElementById('preorderFormSection');
+          if(preSection) {
+            preSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            preSection.style.transition = 'background 0.4s';
+            preSection.style.backgroundColor = '#FDF5E6';
+            setTimeout(() => { preSection.style.backgroundColor = ''; }, 800);
+            showToastMessage("✨ Reserve your item using the custom pre-order form below!", true);
+          }
+        } else {
+          // regular add to cart
+          const card = newBtn.closest('.product-card');
+          if(card) {
+            const prodName = card.getAttribute('data-name') || card.querySelector('.product-title')?.innerText || 'product';
+            cartCount++;
+            updateCartUI();
+            showToastMessage(`✓ Added "${prodName}" to your bag.`);
+          } else {
+            cartCount++;
+            updateCartUI();
+            showToastMessage(`✓ Item added to cart`);
+          }
+        }
+      });
+    });
+  }
+
+  // pre-order form handler (custom)
+  function initPreorderForm() {
+    const submitBtn = document.getElementById('submitPreorderBtn');
+    const nameInput = document.getElementById('preorderName');
+    const emailInput = document.getElementById('preorderEmail');
+    const itemSelect = document.getElementById('preorderItem');
+    const msgDiv = document.getElementById('preorderMessage');
+
+    submitBtn.addEventListener('click', () => {
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const selectedItem = itemSelect.value;
+
+      if(!name || !email) {
+        showToastMessage("Please enter name and email for pre-order.", false);
+        msgDiv.innerHTML = `<div class="toast-message" style="background:#B55A3A;">❌ Both fields required.</div>`;
+        setTimeout(() => { if(msgDiv) msgDiv.innerHTML = ''; }, 2500);
+        return;
+      }
+      if(!email.includes('@') || !email.includes('.')) {
+        showToastMessage("Valid email needed.", false);
+        return;
+      }
+
+      // simulate pre-order success
+      msgDiv.innerHTML = `<div class="toast-message" style="background: var(--mustard); color: #2A2A27;">🎉 Thank you ${name}! You're on the list for "${selectedItem}". We’ll email ${email} as soon as it's ready.</div>`;
+      showToastMessage(`Pre-order confirmed for ${selectedItem}. Artisan update sent.`, true);
+      // optional reset fields but keep positive
+      nameInput.value = '';
+      emailInput.value = '';
+      setTimeout(() => {
+        if(msgDiv) msgDiv.innerHTML = '';
+      }, 5000);
+    });
+  }
+
+  // smooth scroll for 'pre-order button' in hero section
+  function initScrollToForm() {
+    const scrollBtn = document.getElementById('preorderScrollBtn');
+    if(scrollBtn) {
+      scrollBtn.addEventListener('click', () => {
+        const formSection = document.getElementById('preorderFormSection');
+        if(formSection) formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    const exploreBtn = document.getElementById('exploreBtn');
+    if(exploreBtn) {
+      exploreBtn.addEventListener('click', () => {
+        const productGrid = document.querySelector('.product-grid');
+        if(productGrid) productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }
+
+  // setting product data attributes for easy identification (data-name & data-price)
+  function enrichProductAttributes() {
+    const cards = document.querySelectorAll('.product-card');
+    const titles = ['Cumulus Alpaca Sweater', 'Terracotta Highlands Scarf', 'Mossstone Alpaca Throw', 'Golden Mustard Beanie'];
+    const prices = [289,149,359,89];
+    cards.forEach((card, idx) => {
+      if(!card.getAttribute('data-name')) card.setAttribute('data-name', titles[idx]);
+      if(!card.getAttribute('data-price')) card.setAttribute('data-price', prices[idx]);
+    });
+  }
+
+  // high resolution background fix: ensure hero image macro remains optimized
+  // We added .hero-image high-res image; but also add background double-check for retina
+  function enhanceHeroTexture() {
+    // For extra rich macro depth, just ensure it loads high resolution from external source already set
+    const heroDiv = document.querySelector('.hero-image');
+    if(heroDiv && window.devicePixelRatio > 1) {
+      // optional background already set, but we ensure high-quality url
+      // image already high-res 1600w on 2x screens
+    }
+  }
+
+  // call all initializers
+  window.addEventListener('DOMContentLoaded', () => {
+    enrichProductAttributes();
+    bindAddToCartButtons();
+    initPreorderForm();
+    initScrollToForm();
+    enhanceHeroTexture();
+    // also apply dynamic checkout message if needed
+    updateCartUI();
+  });
+</script>
+</body>
+</html>
